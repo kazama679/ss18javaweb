@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Danh sách đơn hàng</h1>
+
+<form action="#" method="get">
+    <input type="text" name="username" placeholder="Tên người dùng" th:value="${username}"/>
+    <input type="date" name="fromDate" th:value="${#dates.format(fromDate, 'yyyy-MM-dd')}"/>
+    <input type="date" name="toDate" th:value="${#dates.format(toDate, 'yyyy-MM-dd')}"/>
+
+    <select name="status">
+        <option value="" th:selected="${status == null}">Tất cả</option>
+        <option value="pending" th:selected="${status == 'pending'}">Chờ xác nhận</option>
+        <option value="confirmed" th:selected="${status == 'confirmed'}">Đã xác nhận</option>
+        <option value="cancelled" th:selected="${status == 'cancelled'}">Đã hủy</option>
+        <option value="shipped" th:selected="${status == 'shipped'}">Đã giao</option>
+    </select>
+
+    <button type="submit">Lọc</button>
+</form>
+
+<table border="1" cellpadding="5" cellspacing="0">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Người dùng</th>
+        <th>Ngày đặt</th>
+        <th>Trạng thái</th>
+        <th>Thao tác</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="order : ${orders}">
+        <td th:text="${order.id}"></td>
+        <td th:text="${order.user.username}"></td>
+        <td th:text="${#dates.format(order.orderDate, 'dd/MM/yyyy')}"></td>
+        <td th:text="${order.status}"></td>
+        <td>
+            <a th:if="${order.status == 'pending'}" th:href="@{'/admin/orders/confirm/' + ${order.id}}">Xác nhận</a> |
+            <a th:if="${order.status != 'cancelled'}" th:href="@{'/admin/orders/cancel/' + ${order.id}}">Hủy</a> |
+            <select onchange="if(this.value) location.href='/admin/orders/changeStatus/' + [[${order.id}]] + '?status=' + this.value;">
+                <option value="">--Chuyển trạng thái--</option>
+                <option value="pending">Chờ xác nhận</option>
+                <option value="confirmed">Đã xác nhận</option>
+                <option value="cancelled">Đã hủy</option>
+                <option value="shipped">Đã giao</option>
+            </select>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<div>
+    <span>Trang: </span>
+    <span th:each="i : ${#numbers.sequence(0, total/size)}">
+        <a th:href="@{|/admin/orders?page=${i}&size=${size}&username=${username}&fromDate=${#dates.format(fromDate, 'yyyy-MM-dd')}&toDate=${#dates.format(toDate, 'yyyy-MM-dd')}&status=${status}|}"
+           th:text="${i + 1}"></a>
+    </span>
+</div>
+
+</body>
+</html>

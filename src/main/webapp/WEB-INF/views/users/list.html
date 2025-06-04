@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Danh sách người dùng</h1>
+
+<form action="#" method="get">
+    <input type="text" name="keyword" placeholder="Tìm kiếm username hoặc email" th:value="${keyword}"/>
+    <button type="submit">Tìm kiếm</button>
+</form>
+
+<table border="1" cellpadding="5" cellspacing="0">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Trạng thái</th>
+        <th>Thao tác</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="acc : ${accounts}">
+        <td th:text="${acc.id}"></td>
+        <td th:text="${acc.username}"></td>
+        <td th:text="${acc.email}"></td>
+        <td th:text="${acc.enabled} ? 'Hoạt động' : 'Bị khóa'"></td>
+        <td>
+            <a th:if="${acc.enabled}" th:href="@{'/admin/users/lock/' + ${acc.id}}">Khóa</a>
+            <a th:if="${!acc.enabled}" th:href="@{'/admin/users/unlock/' + ${acc.id}}">Mở khóa</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<div>
+    <span>Trang: </span>
+    <span th:each="i : ${#numbers.sequence(0, total/size)}">
+        <a th:href="@{|/admin/users?page=${i}&size=${size}&keyword=${keyword}|}"
+           th:text="${i + 1}"></a>
+    </span>
+</div>
+
+</body>
+</html>
